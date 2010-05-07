@@ -1,0 +1,84 @@
+/*
+  Dropdown styling for droplet
+  
+  Example:
+  .droplet_wrapper
+    ul.droplet_list
+      li
+        a
+      li
+        a
+    button.droplet_placeholder
+    input[type="text"]
+    input[type="hidden"]
+*/
+
+/* Firefox applies padding regardless */
+button::-moz-focus-inner { border: 0; padding: 0; }
+
+/* Default styling for dropdown */
+.droplet_wrapper {
+  height: 34px;
+  
+	position: relative;
+  text-align: left;
+  display: inline-block;
+  *display: inline;
+  zoom: 1;
+}
+.droplet_wrapper input {
+	position: absolute;
+	top: 5px; left: 5px;
+	font-size: 0;
+	z-index: -5;
+}
+.droplet_wrapper ul {
+	background: #fff;
+	border: 1px solid #000;
+	display: block;
+	position: absolute;
+	z-index: 9999;
+	left: 0;
+}
+button.droplet_placeholder {
+  background: url('skins/default/dropdown.gif') no-repeat top right;
+  height: 34px;
+  font: 12px/0 "Helvetica Neue", Arial, sans-serif;
+	color: #333;
+	cursor: pointer;
+	text-align: left;
+	padding: 0 32px 0 0 !important; margin: 0;
+}
+.droplet_placeholder:active {
+  background-position: bottom right;
+  padding: 0 32px 0 0 !important; 
+}
+button.droplet_placeholder span {
+  background: url('skins/default/dropdown.gif') no-repeat top left;
+  display: block;
+  height: 34px;
+  line-height: 31px;
+  padding: 0 10px 0 15px; margin: 0;
+}
+.droplet_placeholder:active span {
+  background-position: bottom left;
+}
+.droplet_wrapper li {}
+/* Need to trigger hasLayout for IE7 */
+.droplet_wrapper li a {
+	display: block;
+	padding: 0 9px 0;
+	line-height: 23px;
+	height: 23px;
+	*width: 100%;
+	overflow: hidden;
+	white-space: nowrap;
+}
+.droplet_wrapper li a.selected {
+	background: #eee;
+}
+.droplet_wrapper li a:hover {
+	background: #000;
+	color: #fff;
+	text-decoration: none;
+}

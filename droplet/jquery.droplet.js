@@ -5,7 +5,7 @@
  * http://garrettbjerkhoel.com
  */
 (function($) {
-  jQuery.fn.extend({
+  $.fn.extend({
     scrollTo : function(speed, easing) {
       return this.each(function() {
         var targetOffset = $(this).offset().top;
@@ -14,13 +14,9 @@
     }
   });
   
-  jQuery.fn.droplet = function(options) {
+  $.fn.droplet = function(options) {
     
-    return this.each(function() {
-      if(!$.nodeName(this, 'select')) return;
-      
-      // Default options
-      var defaults = {
+    var defaults = {
         fadeSpeed: 150,
         parseSelectedOffset: true,
         wrapperClass: 'droplet_wrapper',
@@ -28,7 +24,13 @@
         placeholderClass: 'droplet_placeholder',
         scrollToSelect: true,
         scrollSpeed: 500
-      }, opts = $.extend(defaults, options), $this = $(this);
+      }, opts = $.extend(defaults, options);
+    
+    return this.each(function() {
+      if(!$.nodeName(this, 'select')) return;
+      
+      // Default options
+      var $this = $(this);
       
       /* Calculates all height dimensions because $.height()
          returning 0 due to appended elements */
@@ -48,10 +50,10 @@
       
       /* When the menu is active, it will stay active until
          the user clicks the elsewhere to deactivate it */
-      var menuFadeout = function (event) {
+      var menuFadeout = function (e) {
         // handles if they click on either the <button> or the <span> within the button.
-        var span = $(event.target).parent().prev(),
-            button = $(event.target).prev();
+        var span = $(e.target).parent().prev(),
+            button = $(e.target).prev();
         
         if(!span.hasClass(opts.listClass) && !button.hasClass(opts.listClass)) {
           dropletList.fadeOut(opts.fadeSpeed);
@@ -60,21 +62,21 @@
       
       /* In special cases when the browser makes the surrounding inputs
          focusable, we need to similate the dropdown as 1 input */
-      var moveToNextInput = function (event) {
-        event.preventDefault();
+      var moveToNextInput = function (e) {
+        e.preDefault();
         $(this).closest('select,input[type="text"]').focus();
         return false;
       }
       
       /* If the user presses enter when a item is selected, it will trigger updateHiddenValue()
          if not it will move the selected up or down */
-      var selectEvent = function (event) {
+      var selectEvent = function (e) {
         var selected = dropletList.find('.selected'),
             offset = selected.parent().prevAll().size(),
             maxOffset = selected.parents('ul:eq(0)').find('li').size();
         
         // If they press enter, return and update with selected item
-        if (event.keyCode == 13) {
+        if (e.keyCode == 13) {
           selected.click();
           return false;
         }
@@ -82,7 +84,7 @@
         // Check keycodes to increment or decrement the offset to move the selected class.
         // 38 = Up, 40 = Down
         selected.removeClass('selected');
-        switch(event.keyCode) {
+        switch(e.keyCode) {
           case 38:
             offset--;
           break;
@@ -102,13 +104,14 @@
       }
           
       // Will handle the change of pressing enter, clicking on a option, tab, etc.
-      var toggleDropletList = function (event) {
-        event.preventDefault();
+      var toggleDropletList = function (e) {
+        e.preDefault();
         
-        if(event.type == 'blur') {
+        if(e.type == 'blur') {
           // When no action takes place and they re-tab
-          $(document).unbind('keyup', selectEvent).unbind('click', menuFadeout);
           dropletList.fadeOut(opts.fadeSpeed).removeAttr('id');
+          $(document).unbind('keyup', selectEvent)
+                     .unbind('click', menuFadeout);
         } else {
           if(dropletList.is(':hidden')) {
             $('#open_droplet').fadeOut(opts.fadeSpeed).removeAttr('id');
@@ -118,7 +121,7 @@
             });
             
             // Only if they press tab
-            if(opts.scrollToSelect && event.type == 'focus') {
+            if(opts.scrollToSelect && e.type == 'focus') {
               dropletList.scrollTo(opts.scrollSpeed);
             }
           } else {
@@ -128,8 +131,8 @@
       }
       
       // Handles pressing enter on a selected option, clicking on a option, etc.
-      var updateHiddenValue = function (event) {
-        event.preventDefault();
+      var updateHiddenValue = function (e) {
+        e.preDefault();
         
         var selected = $(this),
             openDroplet = $('#open_droplet'),
@@ -182,9 +185,9 @@
             id: $(this).attr('name'),
             focus: toggleDropletList,
             blur: toggleDropletList,
-            keypress: function (event) {
-              if(event.keyCode == 13) {
-                event.preventDefault();
+            keypress: function (e) {
+              if(e.keyCode == 13) {
+                e.preDefault();
                 return false;
               }
             }

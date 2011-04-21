@@ -157,12 +157,14 @@
         selected.parents('form:eq(0)').trigger('change');
         $(document).unbind('keyup');
         
+		//create arguments to pass, starting with the data as base
+		var args = selected.data();
+		args.name = selected.text()
+		args.value = selected.attr('href');
+
         // Trigger the callback if one is given
         if($.isFunction(opts.change)) {
-          opts.change.call(dropletPlaceholder, {
-            name: selected.text(),
-            value: selected.attr('href')
-          }, index);
+          opts.change.call(dropletPlaceholder, args, index);
         }
       }
       
@@ -208,18 +210,17 @@
         dropletFocusElement.css('width', '0px');
       }
       
-      // Generate all anchors inside of the <ul>
+	// Generate all anchors inside of the <ul>
       $('option', this).each(function (i) {
-        dropletList.append($('<li></li>', {
-          'class': $(this).val().replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_\-]/g,'').toLowerCase()
+		dropletList.append($('<li></li>', {
+			'class': $(this).val().replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_\-]/g,'').toLowerCase(),
         }).html($('<a></a>', {
           'class': ($this.val() === $(this).val()) ? 'selected' : '',
           href: $(this).val(),
           text: $(this).text(),
-          click: updateHiddenValue
+          click: updateHiddenValue,
+		  data: $(this).data()
         })));
-        
-      });
       
       // Write all the new HTML replacing the given <select>
       $(this).before(dropletContainer.append(dropletList)
